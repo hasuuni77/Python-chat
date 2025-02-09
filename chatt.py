@@ -24,16 +24,16 @@ class EncryptedChat:
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
-            print("✅ Ansluten till MQTT-broker!")
+            print("Ansluten till MQTT-broker!")
         else:
-            print(f"❌ Anslutning misslyckades med kod {rc}.")
+            print(f"Anslutning misslyckades med kod {rc}.")
 
     def on_disconnect(self, client, userdata, rc):
         print("⚠ Frånkopplad. Försöker återansluta...")
         while True:
             try:
                 self.client.reconnect()
-                print("🔄 Återansluten!")
+                print("Återansluten!")
                 break
             except Exception as e:
                 print(f"⚠ Återanslutning misslyckades: {e}")
@@ -43,7 +43,7 @@ class EncryptedChat:
         """Dekrypterar och visar mottagna meddelanden."""
         try:
             decrypted_msg = self.cipher.decrypt(msg.payload).decode()
-            print(f"📩 Mottaget: {decrypted_msg}")
+            print(f" Mottaget: {decrypted_msg}")
         except Exception as e:
             print(f"⚠ Kunde inte dekryptera meddelandet: {e}")
 
@@ -52,22 +52,22 @@ class EncryptedChat:
         try:
             self.client.connect(broker, port, 60)
         except Exception as e:
-            print(f"❌ Fel vid anslutning till broker: {e}")
+            print(f" Fel vid anslutning till broker: {e}")
             return
 
         if not topic or " " in topic:
-            print("❌ Ogiltigt topic. Se till att den inte är tom eller innehåller mellanslag.")
+            print(" Ogiltigt topic. Se till att den inte är tom eller innehåller mellanslag.")
             return
 
         self.client.subscribe(topic)
         self.client.loop_start()
-        print("💬 Chatt är igång. Skriv meddelanden nedan. (skriv 'quit' för att avsluta)")
+        print(" Chatt är igång. Skriv meddelanden nedan. (skriv 'quit' för att avsluta)")
 
         try:
             while True:
                 message = input("Du: ")
                 if message.lower() == 'quit':
-                    print("🚪 Avslutar chatten...")
+                    print(" Avslutar chatten...")
                     break
                 try:
                     encrypted_msg = self.cipher.encrypt(message.encode('utf-8'))
@@ -75,25 +75,25 @@ class EncryptedChat:
                 except Exception as e:
                     print(f"⚠ Krypteringsfel: {e}")
         except KeyboardInterrupt:
-            print("\n🔴 Chatten avbröts.")
+            print("\n Chatten avbröts.")
         finally:
             self.client.loop_stop()
             self.client.disconnect()
 
 if __name__ == "__main__":
-    broker = input("🌐 Ange MQTT-broker adress: ")
+    broker = input(" Ange MQTT-broker adress: ")
     
     while True:
         try:
-            port = int(input("🔢 Ange MQTT-port (1-65535): "))
+            port = int(input("Ange MQTT-port (1-65535): "))
             if 1 <= port <= 65535:
                 break
             else:
-                print("❌ Portnummer måste vara mellan 1 och 65535.")
+                print(" Portnummer måste vara mellan 1 och 65535.")
         except ValueError:
-            print("❌ Ogiltig port. Vänligen ange ett nummer.")
+            print("Ogiltig port. Vänligen ange ett nummer.")
 
-    topic = input("📡 Ange MQTT-topic: ")
+    topic = input(" Ange MQTT-topic: ")
 
     chat = EncryptedChat()
     chat.connect_and_start(broker, port, topic)

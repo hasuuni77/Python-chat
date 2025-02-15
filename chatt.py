@@ -7,9 +7,9 @@ from cryptography.fernet import Fernet
 class EncryptedChat:
     def __init__(self, passphrase="liban123"):
         if not passphrase or len(passphrase.strip()) == 0:
-            raise ValueError("Passphrase cannot be empty.")
+            raise ValueError("Passphrase kan inte vara tomt.")
         if len(passphrase) < 8:
-            raise ValueError("Passphrase must be at least 8 characters long.")
+            raise ValueError("Passphrase måste vara minst 8 tecken lång.")
 
         self.key = self.generate_key(passphrase)
         self.cipher = Fernet(self.key)
@@ -19,7 +19,7 @@ class EncryptedChat:
         self.client.on_disconnect = self.on_disconnect
 
     def generate_key(self, passphrase):
-        """Genererar en säker nyckel baserad på passphrasen."""
+        "Genererar en säker nyckel baserad på passphrasen."
         return base64.urlsafe_b64encode(hashlib.sha256(passphrase.encode()).digest())
 
     def on_connect(self, client, userdata, flags, rc):
@@ -40,7 +40,7 @@ class EncryptedChat:
                 time.sleep(5)
 
     def on_message(self, client, userdata, msg):
-        """Dekrypterar och visar mottagna meddelanden."""
+        "Dekrypterar och visar mottagna meddelanden."
         try:
             decrypted_msg = self.cipher.decrypt(msg.payload).decode()
             print(f" Mottaget: {decrypted_msg}")
